@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
-const { check } = require('express-validator');
+const authController = require('../controllers/authController'); 
+const { check, validationResult } = require('express-validator');
+
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 // @route  POST api/auth/register
 // @desc   Register a new user
@@ -13,7 +21,8 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
   ],
-  authController.registerUser
+  handleValidationErrors,
+  authController.signup
 );
 
 // @route  POST api/auth/login
@@ -25,12 +34,8 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Password is required').exists()
   ],
-  authController.loginUser
+  handleValidationErrors,
+  authController.login
 );
-
-// @route  GET api/auth/logout
-// @desc   Logout user / end session
-// @access Private
-router.get('/logout', authController.logoutUser);
 
 module.exports = router;

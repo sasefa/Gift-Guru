@@ -1,18 +1,15 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true); // or false, depending on your use case
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false
-    });
-    console.log('MongoDB Connected');
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
+    const URI = process.env.MONGO_URI || 'your_backup_uri';
+    await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Database Connected Successfully");
+  } catch(err) {
+    console.log("Database Connection Error: ", err);
   }
 };
 
 module.exports = connectDB;
+
