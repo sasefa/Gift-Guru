@@ -1,8 +1,11 @@
+require('dotenv').config();  // Ensure dotenv is required at the very top
+console.log('MONGO_URI:', process.env.MONGO_URI);
+console.log('TEST_VAR:', process.env.TEST_VAR);  // Additional debug line
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/dbConfig');
-require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const giftRoutes = require('./routes/giftRoutes');
@@ -31,7 +34,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
