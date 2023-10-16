@@ -21,10 +21,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // loginUser is a function exposed from the AuthProvider which sends the form data to the backend for validation
     const isSuccess = await loginUser(loginForm);
     if (isSuccess) {
-      history.push("/"); // Redirect to home page after successful login
+      history.push("/"); 
     }
   };
 
