@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// Destructuring props in functional component arguments
 const Question = ({ question, options, name, handleChange, value }) => {
   return (
     <div className="form-group">
@@ -31,7 +30,6 @@ const Question = ({ question, options, name, handleChange, value }) => {
   );
 }
 
-// Prop-Types validation
 Question.propTypes = {
   question: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(
