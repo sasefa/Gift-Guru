@@ -2,35 +2,36 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 // Components and pages
-import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import GiftListPage from './pages/GiftListPage';
-import RecommendationsPage from './pages/RecommendationsPage';
-import NotFoundPage from './pages/NotFoundPage';
+import Navbar from './components/Navigation/Navbar';
+import HomePage from './components/pages/HomePage';
+import LoginPage from './components/pages/LoginPage';
+import RegisterPage from './components/pages/RegisterPage';
+import GiftListPage from './components/pages/GiftListPage';
+import RecommendationsPage from './components/pages/RecommendationsPage';
+import UserProfile from './components/Profile/UserProfile';
+import Questionnaire from './components/Questionnaire/Questionnaire';
 
-// Context or hooks
-import { AuthProvider } from './context/AuthContext';
+// Context
+import AuthProvider from './components/Auth/AuthProvider';
 
-import './App.css';
+// Styles
+import './assets/styles/Navbar.css';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
-          <Navbar />
-          <div className="container">
-            <Switch>
-              <Route exact path="/" component={HomePage} />
-              <Route path="/login" component={LoginPage} />
-              <Route path="/register" component={RegisterPage} />
-              <Route path="/gifts" component={GiftListPage} />
-              <Route path="/recommendations" component={RecommendationsPage} />
-              <Route component={NotFoundPage} />
-            </Switch>
-          </div>
+        <Navbar />
+        <div className="container">
+          <Switch>
+            <Route exact path="/" component={HomePage} />
+            <Route exact path="/login" component={LoginPage} />
+            <Route exact path="/register" component={RegisterPage} />
+            <Route exact path="/giftlist" component={GiftListPage} />
+            <Route exact path="/recommendations" component={RecommendationsPage} />
+            <Route exact path="/profile" component={UserProfile} />
+            <Route exact path="/questionnaire" component={Questionnaire} />
+          </Switch>
         </div>
       </Router>
     </AuthProvider>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Questionnaire.css';
+import Question from './Question'; // import the Question component
 
-function Questionnaire() {
+const Questionnaire = () => {
   const [formData, setFormData] = useState({
     ageGroup: '',
     interests: '',
@@ -38,35 +38,36 @@ function Questionnaire() {
       <h2>Find the Perfect Gift!</h2>
       {!submitted ? (
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="ageGroup">Age Group:</label>
-            <select name="ageGroup" onChange={handleChange} required>
-              <option value="">Select Age Group</option>
-              <option value="children">Children</option>
-              <option value="teens">Teens</option>
-              <option value="adults">Adults</option>
-              {/* Add more options as per requirement */}
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="interests">Interests:</label>
-            <input
-              type="text"
+          <Question 
+              question="Age Group:"
+              name="ageGroup"
+              options={[
+                  {label: "Select Age Group", value: ""},
+                  {label: "Children", value: "children"},
+                  {label: "Teens", value: "teens"},
+                  {label: "Adults", value: "adults"}
+              ]}
+              handleChange={handleChange}
+              value={formData.ageGroup || ''}
+          />
+          <Question 
+              question="Interests:"
               name="interests"
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="occasion">Occasion:</label>
-            <select name="occasion" onChange={handleChange} required>
-              <option value="">Select Occasion</option>
-              <option value="birthday">Birthday</option>
-              <option value="anniversary">Anniversary</option>
-              {/* Add more options as per requirement */}
-            </select>
-          </div>
-          {/* Add more questions as per requirement */}
+              handleChange={handleChange}
+              value={formData.interests || ''}
+          />
+          <Question 
+              question="Occasion:"
+              name="occasion"
+              options={[
+                  {label: "Select Occasion", value: ""},
+                  {label: "Birthday", value: "birthday"},
+                  {label: "Anniversary", value: "anniversary"}
+              ]}
+              handleChange={handleChange}
+              value={formData.occasion || ''}
+          />
+          {/* Add more questions using the Question Component */}
           <button type="submit">Find Recommendations</button>
         </form>
       ) : (

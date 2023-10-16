@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Question({ question, options, name, handleChange, value }) {
+// Destructuring props in functional component arguments
+const Question = ({ question, options, name, handleChange, value }) => {
   return (
     <div className="form-group">
       <label htmlFor={name}>{question}</label>
