@@ -28,7 +28,6 @@ function Navbar() {
             Reminders
           </NavLink>
         </li>
-        {/* Additional navigation links as per requirement */}
       </ul>
     </nav>
   );
