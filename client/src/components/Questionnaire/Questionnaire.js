@@ -7,7 +7,6 @@ const Questionnaire = () => {
     ageGroup: '',
     interests: '',
     occasion: '',
-    // Add additional questions as needed
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -23,13 +22,10 @@ const Questionnaire = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Post the form data to your API to get recommendations
       await axios.post('/api/recommendations', formData);
-      // Handle subsequent actions like redirecting to recommendations page
       setSubmitted(true);
     } catch (err) {
       console.error('Failed to submit questionnaire', err);
-      // Implement user-friendly error handling here
     }
   };
 
@@ -67,12 +63,10 @@ const Questionnaire = () => {
               handleChange={handleChange}
               value={formData.occasion || ''}
           />
-          {/* Add more questions using the Question Component */}
           <button type="submit">Find Recommendations</button>
         </form>
       ) : (
         <p>Thank you for submitting! Checking for recommendations...</p>
-        // Optionally, redirect or update UI to display recommendations
       )}
     </div>
   );
