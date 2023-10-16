@@ -22,7 +22,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // registerUser is a function exposed from the AuthProvider which sends the form data to the backend to register a new user
     const isSuccess = await registerUser(registerForm);
     if (isSuccess) {
       history.push("/login"); // Redirect to login page after successful registration
