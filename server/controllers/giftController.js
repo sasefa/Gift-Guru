@@ -1,104 +1,101 @@
 const Gift = require('../models/Gift');
+//const { ApiError } = require('../utils/ApiError'); // Ensure the path is correct
 
+// Handling functions
+const handleFindAll = async () => {
+  return await Gift.find().select('name price description'); // Adjust fields as needed
+};
+
+const handleFindById = async (id) => {
+  return await Gift.findById(id).select('name price description'); // Adjust fields
+};
+
+const handleCreate = async (data) => {
+  return await Gift.create(data);
+};
+
+const handleUpdate = async (id, data) => {
+  return await Gift.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true
+  });
+};
+
+const handleDelete = async (id) => {
+  return await Gift.findByIdAndDelete(id);
+};
+
+// Controller functions
 const getAllGifts = async (req, res, next) => {
   try {
-    const gifts = await Gift.find();
-    
+    const gifts = await handleFindAll();
     res.status(200).json({
       status: 'success',
       results: gifts.length,
-      data: {
-        gifts
-      }
+      data: { gifts }
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error fetching gifts, please try again later.'
-    });
+    next(new ApiError('Error fetching gifts, please try again later.', 500));
   }
 };
 
 const getGift = async (req, res, next) => {
   try {
-    const gift = await Gift.findById(req.params.id);
+    const gift = await handleFindById(req.params.id);
 
     if (!gift) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'No gift found with that ID'
-      });
+      return next(new ApiError('No gift found with that ID', 404));
     }
 
     res.status(200).json({
       status: 'success',
-      data: {
-        gift
-      }
+      data: { gift }
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error fetching the gift, please try again later.'
-    });
+    next(new ApiError('Error fetching the gift, please try again later.', 500));
   }
 };
 
 const createGift = async (req, res, next) => {
   try {
-    const newGift = await Gift.create(req.body);
+    if (!req.body.name || !req.body.price) {
+      return next(new ApiError('Name and Price are required to create a gift.', 400));
+    }
+
+    const newGift = await handleCreate(req.body);
 
     res.status(201).json({
       status: 'success',
-      data: {
-        gift: newGift
-      }
+      data: { gift: newGift }
     });
   } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: 'Error creating the gift, please ensure all fields are valid and try again.'
-    });
+    next(new ApiError('Error creating the gift, please ensure all fields are valid and try again.', 400));
   }
 };
 
 const updateGift = async (req, res, next) => {
   try {
-    const gift = await Gift.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    const gift = await handleUpdate(req.params.id, req.body);
 
     if (!gift) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'No gift found with that ID'
-      });
+      return next(new ApiError('No gift found with that ID', 404));
     }
 
     res.status(200).json({
       status: 'success',
-      data: {
-        gift
-      }
+      data: { gift }
     });
   } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: 'Error updating the gift, please ensure all fields are valid and try again.'
-    });
+    next(new ApiError('Error updating the gift, please ensure all fields are valid and try again.', 400));
   }
 };
 
 const deleteGift = async (req, res, next) => {
   try {
-    const gift = await Gift.findByIdAndDelete(req.params.id);
+    const gift = await handleDelete(req.params.id);
 
     if (!gift) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'No gift found with that ID'
-      });
+      return next(new ApiError('No gift found with that ID', 404));
     }
 
     res.status(204).json({
@@ -106,10 +103,7 @@ const deleteGift = async (req, res, next) => {
       data: null
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error deleting the gift, please try again later.'
-    });
+    next(new ApiError('Error deleting the gift, please try again later.', 500));
   }
 };
 

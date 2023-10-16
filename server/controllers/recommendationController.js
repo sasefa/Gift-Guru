@@ -1,28 +1,66 @@
-const Gift = require('../models/Gift');
+const express = require('express');
+const router = express.Router();
+const recommendationController = require('../controllers/recommendationController');
+const authMiddleware = require('../middleware/authMiddleware');
+const validationMiddleware = require('../middleware/validationMiddleware');
 
-const getRecommendations = async (req, res, next) => {
+const generateRecommendations = async (req, res, next) => {
   try {
-    // Logic to retrieve recommendations based on user data, preferences, etc.
-    // This might involve complex querying, machine learning, or simple heuristics.
-    // For simplicity, we'll fetch random gifts as recommendations for now.
-
-    const gifts = await Gift.aggregate([{ $sample: { size: 5 } }]);
+    // Your logic for generating recommendations.
 
     res.status(200).json({
       status: 'success',
-      results: gifts.length,
-      data: {
-        gifts
-      }
+      message: 'Recommendations generated successfully.',
+      //...other response data
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error fetching recommendations, please try again later.'
+    next(new ApiError('Error generating recommendations, please try again later.', 500));
+  }
+};
+
+const getUserRecommendations = async (req, res, next) => {
+  try {
+    // Your logic for getting all recommendations for a specific user.
+
+    res.status(200).json({
+      status: 'success',
+      //...other response data
     });
+  } catch (err) {
+    next(new ApiError('Error fetching user recommendations, please try again later.', 500));
+  }
+};
+
+const getRecommendationDetails = async (req, res, next) => {
+  try {
+    // Your logic for getting details of a specific recommendation.
+
+    res.status(200).json({
+      status: 'success',
+      //...other response data
+    });
+  } catch (err) {
+    next(new ApiError('Error fetching recommendation details, please try again later.', 500));
+  }
+};
+
+const deleteRecommendation = async (req, res, next) => {
+  try {
+    // Your logic for deleting a specific recommendation.
+
+    res.status(204).json({
+      status: 'success',
+      message: 'Recommendation deleted successfully.',
+      //...other response data
+    });
+  } catch (err) {
+    next(new ApiError('Error deleting recommendation, please try again later.', 500));
   }
 };
 
 module.exports = {
-  getRecommendations
+  generateRecommendations,
+  getUserRecommendations,
+  getRecommendationDetails,
+  deleteRecommendation,
 };

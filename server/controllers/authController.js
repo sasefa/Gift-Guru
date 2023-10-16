@@ -1,16 +1,42 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const { ApiError } = require('../middleware/errorHandler');  // Ensure the path is correct
 
 const signToken = (id) => {
+  if(!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
+    throw new ApiError(500, 'JWT configurations are not set in .env file.');
+  }
+
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
 
+const validateRequest = (req) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new ApiError(400, 'Validation error', errors.array());
+  }
+};
+
+const hashPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
+};
+
+const comparePassword = async (rawPassword, hashedPassword) => {
+  return await bcrypt.compare(rawPassword, hashedPassword);
+};
+
 const signup = async (req, res, next) => {
   try {
-    const newUser = await User.create(req.body);
+    validateRequest(req);
+
+    const { username, email, password } = req.body;
+    const hashedPassword = await hashPassword(password);
+
+    const newUser = await User.create({ username, email, password: hashedPassword });
     const token = signToken(newUser._id);
 
     res.status(201).json({
@@ -21,31 +47,20 @@ const signup = async (req, res, next) => {
       }
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error signing up, please try again.'
-    });
+    next(err);
   }
 };
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    validateRequest(req);
 
-    if (!email || !password) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please provide email and password!'
-      });
-    }
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select('+password');
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({
-        status: 'fail',
-        message: 'Incorrect email or password'
-      });
+    if (!user || !(await comparePassword(password, user.password))) {
+      throw new ApiError(401, 'Incorrect email or password');
     }
 
     const token = signToken(user._id);
@@ -54,10 +69,7 @@ const login = async (req, res, next) => {
       token
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Error logging in, please try again.'
-    });
+    next(err);
   }
 };
 
